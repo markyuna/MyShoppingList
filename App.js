@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, FlatList, Modal, Text, Pressable, Image, ImageBackground } from 'react-native';
-import * as Font from 'expo-font';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Modal,
+  Text,
+  Pressable,
+  Image,
+  ImageBackground,
+} from 'react-native';
+// import * as Font from 'expo-font';
+import { useFonts, Kanit_400Regular, Kanit_500Medium, Kanit_700Bold } from '@expo-google-fonts/kanit';
+
 import { SplashScreen } from 'expo-splash-screen';
-import { Device } from 'expo-device';
+// import AppLoading from 'expo-app-loading';
+// import { Device } from 'expo-device';
 
 // Components
 import Header from './components/Header';
@@ -12,23 +24,38 @@ import DismissKeyboard from './components/DismissKeyboard';
 import ButtonComponent from './components/ButtonComponent';
 
 const App = () => {
+  useFonts({Kanit_400Regular, Kanit_500Medium, Kanit_700Bold});
+
   const [myProducts, setMyProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  // const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  const fetchFonts = async () => {
-    await Font.loadAsync({
-      Pacifico: require('./assets/fonts/Pacifico-Regular.ttf'),
-      BagelFatOne: require('./assets/fonts/BagelFatOne-Regular.ttf'),
-    });
-    setFontsLoaded(true);
-  };
+  // const fetchFonts = async () => {
+  //   await Font.loadAsync({
+  //     Pacifico: require('./assets/fonts/Pacifico-Regular.ttf'),
+  //     BagelFatOne: require('./assets/fonts/BagelFatOne-Regular.ttf'),
+  //   });
+  //   setFontsLoaded(true);
+  // };
 
-  useEffect(() => {
-    SplashScreen.hideAsync(); // Ocultar SplashScreen en el montaje inicial
-    fetchFonts();
-  }, []);
+  // useEffect(() => {
+  //   fetchFonts();
+  // }, []);
+
+  // const handleFinishLoading = () => {
+  //   SplashScreen.hideAsync();
+  // };
+
+  // if (!fontsLoaded) {
+  //   return (
+  //     <AppLoading
+  //       startAsync={fetchFonts}
+  //       onFinish={handleFinishLoading}
+  //       onError={console.warn}
+  //     />
+  //   );
+  // }
 
   const submitHandler = (product) => {
     setDisplayModal(false);
@@ -54,33 +81,68 @@ const App = () => {
     setDisplayModal(false);
   };
 
-  if (!fontsLoaded) {
-    return null; // No es necesario mostrar AppLoading, SplashScreen ya se oculta en el useEffect
-  }
-
   return (
     <DismissKeyboard>
-      <View style={styles.container}>
-        <Header title="My Products App" />
-        <ButtonComponent
-          title="Add Product"
-          onPress={() => setDisplayModal(true)}
-        />
-        <AddProduct
-          visible={displayModal}
-          onSubmit={submitHandler}
-          onCancel={cancelNewProduct}
-        />
-        <Products data={myProducts} onDelete={deleteProduct} />
-        <Modal visible={showModal} animationType="fade" transparent={true}>
+      <ImageBackground
+        style={styles.container}
+        source={require('./assets/images/back.jpg')}
+      >
+        <Header />
+
+        <Modal
+          visible={showModal}
+          onRequestClose={() => setShowModal(false)}
+          animationType="slide"
+          hardwareAccelerated
+          transparent
+        >
           <View style={styles.modalContainer}>
-            <Text style={styles.modalText}>Please enter a valid product name</Text>
-            <Pressable style={styles.modalButton} onPress={() => setShowModal(false)}>
-              <Text style={styles.modalButtonText}>OK</Text>
-            </Pressable>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalHeaderText}>Oups!</Text>
+              </View>
+              <View style={styles.modalBody}>
+                <Image
+                  source={require('./assets/images/close-check.png')}
+                  style={styles.redCheck}
+                />
+                <Text style={styles.modalBodyText}>
+                  Merci d'indiquer plus d'un seul caractere
+                </Text>
+              </View>
+              <View style={styles.modalFooter}>
+                <Pressable
+                  style={styles.pressableBtnModal}
+                  onPress={() => setShowModal(false)}
+                >
+                  <Text style={styles.modalBtn}>OK</Text>
+                </Pressable>
+              </View>
+            </View>
           </View>
         </Modal>
-      </View>
+        <ButtonComponent
+          onPressHandler={() => setDisplayModal(true)}
+          style={styles.addProductBtn}
+        >
+          Ajouter un produit
+        </ButtonComponent>
+        <AddProduct
+          submitHandler={submitHandler}
+          displayModal={displayModal}
+          cancelNewProduct={cancelNewProduct}
+        />
+        <FlatList
+          data={myProducts}
+          renderItem={({ item }) => (
+            <Products
+              name={item.name}
+              idString={item.key}
+              deleteProduct={deleteProduct}
+            />
+          )}
+        />
+      </ImageBackground>
     </DismissKeyboard>
   );
 };
@@ -88,32 +150,74 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    padding: 20,
+    paddingTop: 20,
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,.2)',
   },
-  modalText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 20,
+  modalContent: {
+    backgroundColor: '#fff',
+    width: '90%',
+    height: 200,
+    borderRadius: 10,
+    alignItems: 'center',
   },
-  modalButton: {
-    backgroundColor: '#333',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 4,
+  modalHeader: {
+    width: '100%',
+    padding: 16,
+    alignItems: 'center',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgrey',
   },
-  modalButtonText: {
+  modalHeaderText: {
+    color: 'lightgray',
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+  },
+  modalBody: {
+    flex: 1,
+    width: '100%',
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalBodyText: {
+    fontSize: 17,
+  },
+  modalFooter: {
+    width: '100%',
+  },
+  pressableBtnModal: {
+    backgroundColor: 'seagreen',
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  modalBtn: {
+    fontSize: 17,
+    color: 'white',
+    textAlign: 'center',
+    padding: 16,
+  },
+  redCheck: {
+    width: 30,
+    height: 30,
+  },
+  addProductBtn: {
+    backgroundColor: 'darkred',
+    padding: 20,
+    borderRadius: 30,
+    borderWidth: 3,
+    borderColor: 'white',
+    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'Kanit_700Bold',
   },
 });
 
