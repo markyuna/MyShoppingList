@@ -14,7 +14,7 @@ const Products = ({name, deleteProduct, idString}) => {
         <View style={styles.items}>
           <FontAwesome
             name="trash"
-            size={24}
+            size={40}
             color="black"
             onPress={() => deleteProduct(idString)}
           />
@@ -30,14 +30,17 @@ const styles = StyleSheet.create({
   items: {
     marginTop: 10,
     backgroundColor: 'mediumseagreen',
-    borderRadius: 5,
+    borderRadius: 10,
     flexDirection: 'row',
-    padding: 15,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   element: {
     color: 'white',
-    fontSize: 17,
-    fontWeight: 'bold',
+    fontSize: 25,
+    // fontWeight: 'bold',
+    fontFamily: 'Pacifico',
   },
 });
 

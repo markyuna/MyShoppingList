@@ -9,12 +9,11 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-// import * as Font from 'expo-font';
-import { useFonts, Kanit_400Regular, Kanit_500Medium, Kanit_700Bold } from '@expo-google-fonts/kanit';
+import * as Font from 'expo-font';
 
 import { SplashScreen } from 'expo-splash-screen';
-// import AppLoading from 'expo-app-loading';
-// import { Device } from 'expo-device';
+import AppLoading from 'expo-app-loading';
+import { Device } from 'expo-device';
 
 // Components
 import Header from './components/Header';
@@ -24,38 +23,36 @@ import DismissKeyboard from './components/DismissKeyboard';
 import ButtonComponent from './components/ButtonComponent';
 
 const App = () => {
-  useFonts({Kanit_400Regular, Kanit_500Medium, Kanit_700Bold});
-
   const [myProducts, setMyProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
-  // const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  // const fetchFonts = async () => {
-  //   await Font.loadAsync({
-  //     Pacifico: require('./assets/fonts/Pacifico-Regular.ttf'),
-  //     BagelFatOne: require('./assets/fonts/BagelFatOne-Regular.ttf'),
-  //   });
-  //   setFontsLoaded(true);
-  // };
+  const fetchFonts = async () => {
+    await Font.loadAsync({
+      Pacifico: require('./assets/fonts/Pacifico-Regular.ttf'),
+      BagelFatOne: require('./assets/fonts/BagelFatOne-Regular.ttf'),
+    });
+    setFontsLoaded(true);
+  };
 
-  // useEffect(() => {
-  //   fetchFonts();
-  // }, []);
+  useEffect(() => {
+    fetchFonts();
+  }, []);
 
-  // const handleFinishLoading = () => {
-  //   SplashScreen.hideAsync();
-  // };
+  const handleFinishLoading = () => {
+    SplashScreen.hideAsync();
+  };
 
-  // if (!fontsLoaded) {
-  //   return (
-  //     <AppLoading
-  //       startAsync={fetchFonts}
-  //       onFinish={handleFinishLoading}
-  //       onError={console.warn}
-  //     />
-  //   );
-  // }
+  if (!fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={fetchFonts}
+        onFinish={handleFinishLoading}
+        onError={console.warn}
+      />
+    );
+  }
 
   const submitHandler = (product) => {
     setDisplayModal(false);
@@ -189,6 +186,7 @@ const styles = StyleSheet.create({
   },
   modalBodyText: {
     fontSize: 17,
+    
   },
   modalFooter: {
     width: '100%',
@@ -217,7 +215,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    fontFamily: 'Kanit_700Bold',
   },
 });
 
