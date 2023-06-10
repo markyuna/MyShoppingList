@@ -9,11 +9,11 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import * as Font from 'expo-font';
+// import * as Font from 'expo-font';
 
-import { SplashScreen } from 'expo-splash-screen';
+// import { SplashScreen } from 'expo-splash-screen';
 import AppLoading from 'expo-app-loading';
-import { Device } from 'expo-device';
+import { useFonts } from '@expo-google-fonts/kanit'
 
 // Components
 import Header from './components/Header';
@@ -21,37 +21,31 @@ import Products from './components/Products';
 import AddProduct from './components/AddProduct';
 import DismissKeyboard from './components/DismissKeyboard';
 import ButtonComponent from './components/ButtonComponent';
+import StackNav from './routes/HomeStackNav';
 
 const App = () => {
   const [myProducts, setMyProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  // const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  const fetchFonts = async () => {
-    await Font.loadAsync({
-      Pacifico: require('./assets/fonts/Pacifico-Regular.ttf'),
-      BagelFatOne: require('./assets/fonts/BagelFatOne-Regular.ttf'),
+  const [fontsLoaded, error] = useFonts({
+      'Pacifico': require('./assets/fonts/Pacifico-Regular.ttf'),
+      'BagelFatOne': require('./assets/fonts/BagelFatOne-Regular.ttf'),
     });
-    setFontsLoaded(true);
-  };
 
   useEffect(() => {
-    fetchFonts();
-  }, []);
-
-  const handleFinishLoading = () => {
-    SplashScreen.hideAsync();
-  };
+    console.table(myProducts);
+  }, [myProducts]);
 
   if (!fontsLoaded) {
-    return (
-      <AppLoading
-        startAsync={fetchFonts}
-        onFinish={handleFinishLoading}
-        onError={console.warn}
-      />
-    );
+    if (!fontsLoaded) {
+      return <AppLoading />;
+    } else {
+      return (
+        <StackNav />
+      );
+    }
   }
 
   const submitHandler = (product) => {
@@ -69,9 +63,9 @@ const App = () => {
   };
 
   const deleteProduct = (key) => {
-    setMyProducts((currentMyProducts) =>
-      currentMyProducts.filter((product) => product.key !== key)
-    );
+    setMyProducts(currentMyProducts => {
+      return currentMyProducts.filter(product => product.key != key)
+    });
   };
 
   const cancelNewProduct = () => {
@@ -80,11 +74,12 @@ const App = () => {
 
   return (
     <DismissKeyboard>
+        <Header />
+      <StackNav />
       <ImageBackground
         style={styles.container}
         source={require('./assets/images/back.jpg')}
       >
-        <Header />
 
         <Modal
           visible={showModal}

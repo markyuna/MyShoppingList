@@ -8,14 +8,14 @@ const Products = ({name, deleteProduct, idString}) => {
   return (
       <Pressable
         onPress={() => deleteProduct(idString)}
-        // android_ripple={{ color: 'lightgrey' }}
+        android_ripple={{ color: 'lightgrey' }}
       >
       <ScrollView>
         <View style={styles.items}>
           <FontAwesome
             name="trash"
             size={40}
-            color="black"
+            color="grey"
             onPress={() => deleteProduct(idString)}
           />
             <Text style={styles.element}> {name} </Text>
